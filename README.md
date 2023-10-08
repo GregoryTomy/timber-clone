@@ -1,8 +1,8 @@
-# Timber Man Clone in C++
+# Timberman Clone in C++
 
 ## Overview
 
-This is a clone of the popular game Timber Man, implemented in C++ using the SFML library. The purpose of this project is to get hands-on experience with C++ through game development.
+This is a clone of the popular game Timberman, implemented in C++ using the SFML library. The purpose of this project is to get hands-on experience with C++ through game development.
 
 ## Dependencies
 
