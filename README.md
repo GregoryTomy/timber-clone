@@ -10,3 +10,6 @@ This is a clone of the popular game Timber Man, implemented in C++ using the SFM
 - SFML 2.5 or higher
 - 
 ![Game Screenshot](./media/image.png)
+
+## Gameplay
+![Gameplay GIF](./media/gameplay.mov)
