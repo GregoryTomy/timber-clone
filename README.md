@@ -12,4 +12,4 @@ This is a clone of the popular game Timber Man, implemented in C++ using the SFM
 ![Game Screenshot](./media/image.png)
 
 ## Gameplay
-![Gameplay GIF](./media/gameplay.mov)
+![Gameplay GIF](./media/gameplay.gif)
