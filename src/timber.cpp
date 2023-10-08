@@ -9,6 +9,11 @@ void updateBranches(int seed);
 const int NUM_BRANCHES = 6;
 Sprite branches[NUM_BRANCHES];
 
+const int NUM_CLOUDS = 3;
+Sprite clouds[NUM_CLOUDS];
+bool cloudActive[NUM_CLOUDS];
+float cloudSpeed[NUM_CLOUDS];
+
 enum class side
 {
     LEFT,
@@ -34,10 +39,20 @@ int main()
     // Tree
     Texture textureTree;
     textureTree.loadFromFile("graphics/tree.png");
+    Texture textureTree2;
+    textureTree2.loadFromFile("graphics/tree2.png");
 
     Sprite spriteTree;
     spriteTree.setTexture(textureTree);
     spriteTree.setPosition(810, 0);
+
+    Sprite spriteTree2;
+    spriteTree2.setTexture(textureTree2);
+    spriteTree2.setPosition(1600, -200);
+
+    Sprite spriteTree3;
+    spriteTree3.setTexture(textureTree2);
+    spriteTree3.setPosition(200, -150);
 
     // Prepare the bee
     Texture textureBee;
@@ -114,24 +129,13 @@ int main()
     Texture textureCloud;
     textureCloud.loadFromFile("graphics/cloud.png");
 
-    Sprite spriteCloud1;
-    Sprite spriteCloud2;
-    Sprite spriteCloud3;
-    spriteCloud1.setTexture(textureCloud);
-    spriteCloud2.setTexture(textureCloud);
-    spriteCloud3.setTexture(textureCloud);
-
-    spriteCloud1.setPosition(-1000, 0);
-    spriteCloud2.setPosition(-1000, 250);
-    spriteCloud3.setPosition(-1000, 500);
-
-    bool cloud1Active = false;
-    bool cloud2Active = false;
-    bool cloud3Active = false;
-
-    float cloud1Speed = 0.0f;
-    float cloud2Speed = 0.0f;
-    float cloud3Speed = 0.0f;
+    for (int i = 0; i < NUM_CLOUDS; ++i)
+    {
+        clouds[i].setTexture(textureCloud);
+        clouds[i].setPosition(-1000, i * 250);
+        cloudActive[i] = false;
+        cloudSpeed[i] = 0.0f;
+    }
 
     // Variables to control time
     Clock clock;
@@ -164,7 +168,7 @@ int main()
     scoreText.setFont(font);
 
     messageText.setCharacterSize(75);
-    scoreText.setCharacterSize(100);
+    scoreText.setCharacterSize(75);
 
     messageText.setString("Press enter to start!");
     scoreText.setString("Score = 0");
@@ -185,10 +189,11 @@ int main()
     RectangleShape scoreBackground;
     FloatRect scoreTextRect = scoreText.getLocalBounds();
     scoreBackground.setSize(
-        Vector2f(scoreTextRect.width, scoreTextRect.height));
+        Vector2f(scoreTextRect.width + 60, scoreTextRect.height + 20));
     scoreBackground.setFillColor(Color(0, 0, 0, 128));
-    scoreBackground.setPosition(scoreText.getPosition().x + scoreTextRect.left,
-                                scoreText.getPosition().y + scoreTextRect.top);
+    scoreBackground.setPosition(
+        scoreText.getPosition().x + scoreTextRect.left - 10,
+        scoreText.getPosition().y + scoreTextRect.top - 10);
 
     Texture textureBranch;
     textureBranch.loadFromFile("graphics/branch.png");
@@ -340,69 +345,29 @@ int main()
             }
 
             // Managing the Clouds
-            // Cloud 1
-            if (!cloud1Active)
-            {
-                srand((int)time(0) * 10);
-                cloud1Speed = (rand() % 200);
 
-                srand((int)time(0) * 10);
-                float height = (rand() % 150);
-                spriteCloud1.setPosition(-200, height);
-                cloud1Active = true;
-            }
-            else
+            for (int i = 0; i < NUM_BRANCHES; i++)
             {
-                spriteCloud1.setPosition(spriteCloud1.getPosition().x +
-                                             (cloud1Speed * dt.asSeconds()),
-                                         spriteCloud1.getPosition().y);
-                if (spriteCloud1.getPosition().x > 1920)
+                if (!cloudActive[i])
                 {
-                    cloud1Active = false;
+                    srand((int)time(0) * 10 * (i + 1));
+                    cloudSpeed[i] = (rand() % 200);
+
+                    srand((int)time(0) * 10 * (i + 1));
+                    float height = (rand() % 150) + i * 100;
+                    clouds[i].setPosition(-200, height);
+                    cloudActive[i] = true;
                 }
-            }
-
-            // Cloud 2
-
-            if (!cloud2Active)
-            {
-                srand((int)time(0) * 20);
-                cloud2Speed = (rand() % 200);
-
-                srand((int)time(0) * 20);
-                float height = (rand() % 300) - 150;
-                spriteCloud2.setPosition(-200, height);
-                cloud2Active = true;
-            }
-            else
-            {
-                spriteCloud2.setPosition(spriteCloud2.getPosition().x +
-                                             (cloud2Speed * dt.asSeconds()),
-                                         spriteCloud2.getPosition().y);
-                if (spriteCloud2.getPosition().x > 1920)
+                else
                 {
-                    cloud2Active = false;
-                }
-            }
-            // Cloud 3
+                    clouds[i].setPosition(clouds[i].getPosition().x +
+                                              (cloudSpeed[i] * dt.asSeconds()),
+                                          clouds[i].getPosition().y);
 
-            if (!cloud3Active)
-            {
-                srand((int)time(0) * 30);
-                cloud3Speed = (rand() % 200);
-                srand((int)time(0) * 30);
-                float height = (rand() % 450) - 150;
-                spriteCloud3.setPosition(-200, height);
-                cloud3Active = true;
-            }
-            else
-            {
-                spriteCloud3.setPosition(spriteCloud3.getPosition().x +
-                                             (cloud3Speed * dt.asSeconds()),
-                                         spriteCloud3.getPosition().y);
-                if (spriteCloud3.getPosition().x > 1920)
-                {
-                    cloud3Active = false;
+                    if (clouds[i].getPosition().x > 1920)
+                    {
+                        cloudActive[i] = false;
+                    }
                 }
             }
 
@@ -485,13 +450,16 @@ int main()
 
         // Draw your scene here
         window.draw(spriteBackground);
-        window.draw(spriteCloud1);
-        window.draw(spriteCloud2);
-        window.draw(spriteCloud3);
+        // window.draw(spriteCloud1);
+        // window.draw(spriteCloud2);
+        // window.draw(spriteCloud3);
+        for (int i = 0; i < NUM_CLOUDS; i++) { window.draw(clouds[i]); }
 
         for (int i = 0; i < NUM_BRANCHES; i++) { window.draw(branches[i]); }
 
         window.draw(spriteTree);
+        window.draw(spriteTree3);
+        window.draw(spriteTree2);
         window.draw(spriteBee);
 
         window.draw(spritePlayer);
